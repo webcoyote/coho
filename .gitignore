@@ -1,0 +1,8 @@
+*.vcxproj.filters
+*.opensdf
+*.sdf
+*.suo
+
+ipch/
+Debug/
+Release/
