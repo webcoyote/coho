@@ -42,6 +42,14 @@
 #define NULL_STMT ((void) 0)
 
 
+// shorter version of UNREFERENCED_PARAMETER
+#define REF(arg)    (arg)
+
+
+// type definition for API classes with no implementation
+#define APICLASS struct __declspec(novtable)
+
+
 // Run-time assertion
 #ifdef ASSERTIONS_ENABLED
 #define ASSERT(x) ((x) ? 0 : FatalAssert(#x, __FILE__, __LINE__))

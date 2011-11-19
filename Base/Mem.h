@@ -18,17 +18,20 @@
 #define ZERO(x)     memset(&x, 0, sizeof(x))
 #define ZEROPTR(x)  memset(x, 0, sizeof(*x))
 
+// Simplified allocation
+#define ALLOC(bytes)        MemAlloc(bytes, __FILE__, __LINE__)
+#define REALLOC(ptr, bytes) MemRealloc(ptr, bytes, __FILE__, __LINE__)
 
 // Memory allocation
 void   MemFree (void * ptr);
-void * MemAlloc (size_t bytes);
-void * MemRealloc (void * ptr, size_t bytes);
+void * MemAlloc (size_t bytes, const char file[], int line);
+void * MemRealloc (void * ptr, size_t bytes, const char file[], int line);
 
 
 //=============================================================================
-inline void * MemAlloc (size_t bytes) {
-    void * MemAllocHelper (size_t bytes);
-    void * result = MemAllocHelper(bytes);
+inline void * MemAlloc (size_t bytes, const char file[], int line) {
+    void * MemAllocHelper (size_t bytes, const char file[], int line);
+    void * result = MemAllocHelper(bytes, file, line);
     __assume(result);
     return result;
 }
@@ -36,8 +39,8 @@ inline void * MemAlloc (size_t bytes) {
 //=============================================================================
 // new/delete
 inline void * operator new (unsigned bytes) {
-    void * MemAllocHelper (size_t bytes);
-    void * result = MemAllocHelper(bytes);
+    void * MemAllocHelper (size_t bytes, const char file[], int line);
+    void * result = MemAllocHelper(bytes, __FILE__, __LINE__);
     __assume(result);
     return result;
 }

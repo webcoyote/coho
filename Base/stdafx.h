@@ -20,6 +20,7 @@
 #include <process.h>
 #include <stdio.h>
 #include <stddef.h>
+#include <crtdbg.h>
 
 // Project includes
 #include "Base.h"

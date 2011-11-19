@@ -218,6 +218,34 @@ void StrAnsiToUnicode (wchar * dstBuf, size_t dstChars, const char srcBuf[]) {
     }
 }
 
+//=============================================================================
+char * StrDupAnsi (const  char str[]) {
+    unsigned bytes = StrBytes(str);
+    char * dup = (char *) ALLOC(bytes);
+    memcpy(dup, str, bytes);
+    return dup;
+}
+wchar * StrDupWide (const wchar str[]) {
+    unsigned bytes = StrBytes(str);
+    wchar * dup = (wchar *) ALLOC(bytes);
+    memcpy(dup, str, bytes);
+    return dup;
+}
+
+//=============================================================================
+wchar * StrDupAnsiToWide (const  char str[]) {
+    unsigned chars = StrChars(str);
+    wchar * dup = (wchar *) ALLOC(chars * sizeof(dup[0]));
+    StrAnsiToUnicode(dup, chars, str);
+    return dup;
+}
+char  * StrDupWideToAnsi (const wchar str[]) {
+    unsigned chars = StrChars(str);
+    char * dup = (char *) ALLOC(chars * sizeof(dup[0]));
+    StrUnicodeToAnsi(dup, chars, str);
+    return dup;
+}
+
 
 //===================================
 // MIT License

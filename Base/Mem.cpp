@@ -40,18 +40,20 @@ static void OutOfMemory () {
 //=============================================================================
 void MemFree (void * ptr) {
 #ifdef USE_MALLOC
-    free(ptr);
+    _free_dbg(ptr, _NORMAL_BLOCK);
 #else
     HeapFree(s_heap, 0, ptr);
 #endif
 }
 
 //=============================================================================
-void * MemAllocHelper (size_t bytes) {
+void * MemAllocHelper (size_t bytes, const char file[], int line) {
 #ifdef USE_MALLOC
-    if (void * result = malloc(bytes))
+    if (void * result = _malloc_dbg(bytes, _NORMAL_BLOCK, file, line))
         return result;
 #else
+    REF(file);
+    REF(line);
     if (!s_heap)
         s_heap = GetProcessHeap();
 
@@ -64,11 +66,13 @@ void * MemAllocHelper (size_t bytes) {
 }
 
 //=============================================================================
-void *  MemRealloc (void * ptr, size_t bytes) {
+void *  MemRealloc (void * ptr, size_t bytes, const char file[], int line) {
 #ifdef USE_MALLOC
-    if (void * result = realloc(ptr, bytes))
+    if (void * result = _realloc_dbg(ptr, bytes, _NORMAL_BLOCK, file, line))
         return result;
 #else
+    REF(file);
+    REF(line);
     if (!s_heap)
         s_heap = GetProcessHeap();
 

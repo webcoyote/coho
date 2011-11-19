@@ -68,6 +68,14 @@ void StrUnicodeToAnsi (char * dstBuf, size_t dstChars, const wchar srcBuf[]);
 void StrAnsiToUnicode (wchar * dstBuf, size_t dstChars, const char srcBuf[]);
 
 
+// String duplication functions
+char  * StrDupAnsi (const  char str[]); // use MemFree to relase
+wchar * StrDupWide (const wchar str[]); // use MemFree to relase
+
+wchar * StrDupAnsiToWide (const  char str[]); // use MemFree to relase
+char  * StrDupWideToAnsi (const wchar str[]); // use MemFree to relase
+
+
 //===================================
 // MIT License
 //

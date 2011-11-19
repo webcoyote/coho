@@ -237,14 +237,8 @@ static void TestRandom () {
 }   // namespace HashTest
 
 
-/******************************************************************************
-*
-*   Main
-*
-***/
-
 //=============================================================================
-int _tmain(int argc, _TCHAR* argv[]) {
+static void SetErrMode () {
     // Report to message box
     _set_error_mode(_OUT_TO_MSGBOX);
 
@@ -255,6 +249,18 @@ int _tmain(int argc, _TCHAR* argv[]) {
     _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDOUT);
     _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE |  _CRTDBG_MODE_DEBUG | _CRTDBG_MODE_WNDW);
     _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDOUT);
+}
+
+
+/******************************************************************************
+*
+*   Main
+*
+***/
+
+//=============================================================================
+int _tmain(int argc, _TCHAR* argv[]) {
+    SetErrMode();
 
     // Test lists
     {
