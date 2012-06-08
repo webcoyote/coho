@@ -1,28 +1,45 @@
-/******************************************************************************
+/************************************
 *
-*   Base.h
+*   SrvLib.h
 *   
 *
-*   By Patrick Wyatt - 5/16/2010
+*   By Patrick Wyatt - 5/14/2010
 *
 ***/
 
 
-#include "Macros.h"
-#include "Types.h"
-#include "List.h"
-#include "Hash.h"
-#include "Debug.h"
-#include "Log.h"
-#include "Mem.h"
-#include "Path.h"
-#include "Str.h"
-#include "Sync.h"
-#include "Task.h"
-#include "Time.h"
+#ifdef APP_H
+#error "Header included more than once"
+#endif
+#define APP_H
 
 
-#pragma comment(lib, "Base")
+class CServiceStatus {
+public:
+    virtual void UpdateStatus (
+        unsigned checkPoint,
+        unsigned waitHintMs
+    ) = 0;
+};
+
+
+class CApplication {
+public:
+// Application config
+    virtual const wchar * Name () const = 0;
+    virtual const wchar * Description () const = 0;
+
+
+// Application run
+    virtual void Start (CServiceStatus * status) = 0;
+    virtual void Run (bool serviceMode) = 0;
+    virtual void SignalStop () = 0;
+    virtual void Stop () = 0;
+    virtual int ExitCode () const = 0;
+};
+
+
+CApplication & ExGetApplication ();
 
 
 //===================================

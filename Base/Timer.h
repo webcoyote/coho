@@ -1,28 +1,48 @@
 /******************************************************************************
 *
-*   Base.h
+*   Timer.h
 *   
 *
-*   By Patrick Wyatt - 5/16/2010
+*   By Patrick Wyatt - 11/19/2011
 *
 ***/
 
 
-#include "Macros.h"
-#include "Types.h"
-#include "List.h"
-#include "Hash.h"
-#include "Debug.h"
-#include "Log.h"
-#include "Mem.h"
-#include "Path.h"
-#include "Str.h"
-#include "Sync.h"
-#include "Task.h"
-#include "Time.h"
+#ifdef TIMER_H
+#error "Header included more than once"
+#endif
+#define TIMER_H
 
 
-#pragma comment(lib, "Base")
+/******************************************************************************
+*
+*   Exports
+*
+***/
+
+// Used for TimerCreate() and Timer::Set()
+const unsigned TIMER_INFINITE_MS = (unsigned) -1;
+
+// Your class should derive from this class to receive a callback
+APICLASS ITimerCallback {
+    virtual unsigned OnTimer () = 0;
+};
+
+// When you create a timer you get this timer management object
+APICLASS ITimer {
+    virtual void Delete () = 0;
+    virtual void Set (__in unsigned sleepMs) = 0;
+};
+
+void TimerCreate (
+    __in    ITimerCallback *    callback,
+    __in    unsigned            sleepMs,
+    __out   ITimer **           timer
+);
+
+// Module creation/destruction
+void TimerInitialize ();
+void TimerDestroy ();
 
 
 //===================================

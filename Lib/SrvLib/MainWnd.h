@@ -1,28 +1,21 @@
-/******************************************************************************
+/************************************
 *
-*   Base.h
+*   MainWnd.h
 *   
 *
-*   By Patrick Wyatt - 5/16/2010
+*   By Patrick Wyatt - 5/17/2010
 *
 ***/
 
 
-#include "Macros.h"
-#include "Types.h"
-#include "List.h"
-#include "Hash.h"
-#include "Debug.h"
-#include "Log.h"
-#include "Mem.h"
-#include "Path.h"
-#include "Str.h"
-#include "Sync.h"
-#include "Task.h"
-#include "Time.h"
+#ifdef MAINWND_H
+#error "Header included more than once"
+#endif
+#define MAINWND_H
 
 
-#pragma comment(lib, "Base")
+void MainWndInitialize (const wchar name[]);
+void MainWndDestroy ();
 
 
 //===================================

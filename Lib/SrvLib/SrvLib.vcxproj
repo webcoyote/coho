@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2E31A4E1-59F9-47ED-AC3B-C6A30E17C7B2}</ProjectGuid>
+    <ProjectGuid>{7902CF80-F1D1-4066-890F-E02692454A89}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Base</RootNamespace>
+    <RootNamespace>SrvLib</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -44,8 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -60,6 +59,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -69,35 +69,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Base.h" />
-    <ClInclude Include="Debug.h" />
-    <ClInclude Include="Hash.h" />
-    <ClInclude Include="List.h" />
-    <ClInclude Include="Log.h" />
-    <ClInclude Include="Macros.h" />
-    <ClInclude Include="Mem.h" />
-    <ClInclude Include="Path.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Str.h" />
-    <ClInclude Include="Sync.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="Task.h" />
-    <ClInclude Include="Time.h" />
-    <ClInclude Include="Types.h" />
+    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Debug.cpp" />
-    <ClCompile Include="Log.cpp" />
-    <ClCompile Include="Mem.cpp" />
-    <ClCompile Include="Path.cpp" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="MainWnd.h" />
+    <ClInclude Include="SrvLib.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="MainWnd.cpp" />
+    <ClCompile Include="SrvLib.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Str.cpp" />
-    <ClCompile Include="Sync.cpp" />
-    <ClCompile Include="Task.cpp" />
-    <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
