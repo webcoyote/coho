@@ -72,6 +72,15 @@
 #define WARN(msg) message (__FILE__ "[" STRING_(__LINE__) "] : warning C0000: " msg)
 
 
+// Swap two values
+template <typename T>
+inline void swap (T & a, T & b) {
+    T temp(a);
+    a = b;
+    b = temp;
+}
+
+
 //===================================
 // MIT License
 //

@@ -57,7 +57,12 @@ void FatalError () {
     if (_set_error_mode(_REPORT_ERRMODE) == _OUT_TO_MSGBOX) {
         wchar path[MAX_PATH];
         PathGetExeFileName(path, _countof(path));
-        MessageBoxW(NULL, L"Fatal error", path, MB_OK|MB_ICONHAND|MB_TASKMODAL);
+        if (IDCANCEL == MessageBoxW(
+            NULL,
+            L"Fatal error",
+            path,
+            MB_OKCANCEL | MB_ICONHAND | MB_TASKMODAL))
+            DebugBreak();
     }
 
     LogDestroy();
