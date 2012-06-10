@@ -39,7 +39,8 @@ public:
 };
 
 
-CApplication & ExGetApplication ();
+int ServiceMain (CApplication * app);
+void ServiceSignalStop ();
 
 
 //===================================

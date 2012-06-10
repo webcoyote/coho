@@ -14,6 +14,16 @@
 
 /************************************
 *
+*   Private
+*
+***/
+
+
+static CApplication * s_app;
+
+
+/************************************
+*
 *   Command line parser
 *
 ***/
@@ -61,7 +71,7 @@ static void Usage () {
         L"   /password:<pass>\tInstallation password\n"
         L"\n"
         ,   // end of format string
-        ExGetApplication().Name()
+        s_app->Name()
     );
 
     #ifdef _CONSOLE
@@ -86,7 +96,7 @@ CmdLineOptions::CmdLineOptions (const wchar cmdLine[]) {
     int argc = 0;
     wchar ** argv = CommandLineToArgvW(cmdLine, &argc);
     if (!argv) {
-		LOG_OS_LAST_ERROR(L"CommandLineToArgvW");
+        LOG_OS_LAST_ERROR(L"CommandLineToArgvW");
         m_appMode = APP_FAILED_ERROR;
         return;
     }
@@ -204,7 +214,7 @@ static DWORD WINAPI ServiceHandlerEx (
         case SERVICE_CONTROL_STOP:
         case SERVICE_CONTROL_SHUTDOWN:
             sp.SetState(SERVICE_STOP_PENDING);
-            ExGetApplication().SignalStop();
+            s_app->SignalStop();
         return NO_ERROR;
 
         case SERVICE_CONTROL_INTERROGATE:
@@ -220,10 +230,7 @@ static DWORD WINAPI ServiceHandlerEx (
 // This section is only necessary because Visual Studio 6 doesn't have bindings
 // for RegisterServiceCtrlHandlerExW so I have to manually load the library
 // that contains the function. Time to upgrade to VS10!
-static SERVICE_STATUS_HANDLE RegisterService (
-    const CApplication &    app,
-    ServiceParam *          sp
-) {
+static SERVICE_STATUS_HANDLE RegisterService (ServiceParam * sp) {
     HMODULE lib                     = NULL;
     SERVICE_STATUS_HANDLE handle    = NULL;
     for (;;) {
@@ -249,7 +256,7 @@ static SERVICE_STATUS_HANDLE RegisterService (
         }
             
         // Register service handler
-        handle = RegisterServiceCtrlHandlerExW(app.Name(), ServiceHandlerEx, sp);
+        handle = RegisterServiceCtrlHandlerExW(s_app->Name(), ServiceHandlerEx, sp);
         if (!handle) {
             LOG_OS_LAST_ERROR(L"RegisterServiceCtrlHandlerExW");
             break;
@@ -272,36 +279,35 @@ static int ApplicationRun (bool serviceMode) {
     memset(&sp.status, 0, sizeof(sp.status));
     sp.status.dwServiceType         = SERVICE_WIN32_OWN_PROCESS;
     sp.status.dwControlsAccepted    = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
-    CApplication & app = ExGetApplication();
 
     // Register service application
     if (serviceMode) {
-        if (NULL == (sp.handle = RegisterService(app, &sp)))
+        if (NULL == (sp.handle = RegisterService(&sp)))
             FatalError();
     }
 
     // Start service
     sp.SetState(SERVICE_START_PENDING);
     if (!serviceMode)
-        MainWndInitialize(app.Name());
+        MainWndInitialize(s_app->Name());
     TaskInitialize();
     ConfigInitialize();
     ConfigMonitorFile(L"Config\\Srv.ini");
-    app.Start(&sp);
+    s_app->Start(&sp);
 
     // Service is running
     sp.SetState(SERVICE_RUNNING);
-    app.Run(serviceMode);
+    s_app->Run(serviceMode);
 
     // Stop service
     sp.SetState(SERVICE_STOP_PENDING);
-    app.Stop();
+    s_app->Stop();
     ConfigDestroy();
     TaskDestroy();
     MainWndDestroy();
 
     // Service is stopped
-    int exitCode = app.ExitCode();
+    int exitCode = s_app->ExitCode();
     sp.status.dwWin32ExitCode = (DWORD) exitCode;
     sp.SetState(SERVICE_STOPPED);
     return exitCode;
@@ -317,8 +323,7 @@ static void WINAPI ServiceMain (DWORD, LPWSTR *) {
 //===================================
 static int ServiceRun () {
     // Get the application name in a non-const buffer
-    CApplication & app  = ExGetApplication();
-    const wchar * name  = app.Name();
+    const wchar * name  = s_app->Name();
     unsigned chars      = StrChars(name);
     wchar * nameBuf     = (wchar *) _alloca(chars * sizeof(nameBuf[0]));
     StrCopy(nameBuf, chars, name);
@@ -339,7 +344,7 @@ static int ServiceRun () {
     }
 
     // Success!
-    return app.ExitCode();
+    return s_app->ExitCode();
 }
 
 
@@ -436,11 +441,11 @@ static int ServiceInstall (
         // Create the service
         wchar cmdLine[MAX_PATH + 100];
         StrPrintf(cmdLine, _countof(cmdLine), L"\"%s\" /service", path);
-        const CApplication & app = ExGetApplication();
+        const wchar * name = s_app->Name();
         if (NULL == (hService = CreateServiceW(
             hManager,
-            app.Name(),
-            app.Name(),
+            name,
+            name,
             SERVICE_ALL_ACCESS,
             SERVICE_WIN32_OWN_PROCESS,
             SERVICE_AUTO_START,
@@ -479,7 +484,7 @@ static int ServiceInstall (
 
         // Set service description
         SERVICE_DESCRIPTIONW descrip;
-        descrip.lpDescription = const_cast<LPWSTR>(app.Description());
+        descrip.lpDescription = const_cast<LPWSTR>(s_app->Description());
         if (!ChangeServiceConfig2W(
             hService,
             SERVICE_CONFIG_DESCRIPTION,
@@ -503,18 +508,25 @@ static int ServiceInstall (
 
 /************************************
 *
-*   Main
+*   Exports
 *
 ***/
 
 
 //===================================
-static int Main () {
+void ServiceSignalStop () {
+    s_app->SignalStop();
+}
+
+
+//===================================
+int ServiceMain (CApplication * app) {
     // Service applications run out of system directory;
     // reset to application directory to normalize behavior
     // running as a service and as an application
+    s_app = app;
     PathSetProgramDirectory();
-    LogInitialize(ExGetApplication().Name());
+    LogInitialize(s_app->Name());
     DebugSetThreadName("Main");
 
     // Parse the command line
@@ -539,9 +551,9 @@ static int Main () {
             Usage();
         break;
 
-		case APP_FAILED_ERROR:
-		break;
-	}
+        case APP_FAILED_ERROR:
+        break;
+    }
 
     // Complete!
     LogError("Exit code %u\n", exitCode);
@@ -550,20 +562,26 @@ static int Main () {
 }
 
 
-/************************************
-*
-*   Exports
-*
-***/
-
-
 //===================================
-#ifdef _CONSOLE
-int __cdecl _tmain(int, _TCHAR**) {
-    return Main();
-}
-#else
-int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
-    return Main();
-}
-#endif
+// MIT License
+//
+// Copyright (c) 2010 by Patrick Wyatt
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//===================================

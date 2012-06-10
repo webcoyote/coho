@@ -121,15 +121,20 @@ int CServiceApp::ExitCode () const {
 
 /************************************
 *
-*   Public
+*   Exports
 *
 ***/
 
-
 //===================================
-CApplication & ExGetApplication () {
-    return s_app;
+#ifdef _CONSOLE
+int __cdecl _tmain(int, _TCHAR**) {
+    return ServiceMain(&s_app);
 }
+#else
+int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int) {
+    return ServiceMain(&s_app);
+}
+#endif
 
 
 //===================================

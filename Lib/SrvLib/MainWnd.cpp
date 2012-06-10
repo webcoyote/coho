@@ -42,7 +42,7 @@ static LRESULT CALLBACK MainWndProc (
         break;
 
         case WM_DESTROY:
-            ExGetApplication().SignalStop();
+            ServiceSignalStop();
         break;
 
         default:
