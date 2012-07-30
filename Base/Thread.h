@@ -25,6 +25,10 @@ struct Thread;
     );
     void ThreadDestroy (Thread * thread);
 
+    // Register a thread that was created using an API other than ThreadCreate
+    Thread * ThreadRegister (const char name[]);
+    void ThreadUnregister (Thread * thread);
+
     // For each thread created with ThreadCreate, call this function
     // at least once per minute to mark it alive, otherwise deadlock
     // processor will mark it dead and crash the application.

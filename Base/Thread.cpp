@@ -70,7 +70,12 @@ static void LogThread_CS (const Thread & t) {
 
 //=============================================================================
 static void LogThreads_CS () {
+    unsigned threadId = GetCurrentThreadId();
     for (const Thread * t = s_threads.Head(); t; t = t->m_link.Next()) {
+        // Suspending the current thread is a bad idea
+        if (t->m_id == threadId)
+            continue;
+
         SuspendThread(t->m_handle);
         LogThread_CS(*t);
         ResumeThread(t->m_handle);
@@ -157,7 +162,6 @@ void ThreadDestroy () {
     }
 }
 
-
 //=============================================================================
 Thread * ThreadCreate (
     const char name[],
@@ -165,6 +169,8 @@ Thread * ThreadCreate (
     unsigned (__stdcall * start_address )( void * ),
     void *arglist
 ) {
+    // Create thread suspended so we have a chance to register
+    // it before starting it running
     Thread * t = new Thread(name);
     t->m_handle = (HANDLE) _beginthreadex(
         NULL,
@@ -177,27 +183,58 @@ Thread * ThreadCreate (
     ASSERT(t->m_handle);
     DebugSetThreadName(name, t->m_id);
 
+    // Register thread
     s_critsect.Enter();
     {
         s_threads.InsertTail(t);
     }
     s_critsect.Leave();
 
+    // *Now* start it
     ResumeThread(t->m_handle);
     return t;
 }
 
 //=============================================================================
 void ThreadDestroy (Thread * t) {
-    WaitForSingleObject(t->m_handle, INFINITE);
+    ASSERT(t->m_handle);
 
+    // Wait for thread to exit and cleanup
+    WaitForSingleObject(t->m_handle, INFINITE);
+    CloseHandle(t->m_handle);
+    t->m_handle = NULL;
+
+    ThreadUnregister(t);
+}
+
+//=============================================================================
+Thread * ThreadRegister (const char name[]) {
+    // Create thread record with empty thread handle
+    Thread * t = new Thread(name);
+    t->m_id = GetCurrentThreadId();
+    DebugSetThreadName(name, t->m_id);
+
+    // Register thread
+    s_critsect.Enter();
+    {
+        s_threads.InsertTail(t);
+    }
+    s_critsect.Leave();
+
+    return t;
+}
+
+//=============================================================================
+void ThreadUnregister (Thread * t) {
+    ASSERT(!t->m_handle);
+
+    // Safely unlink from thread list
     s_critsect.Enter();
     {
         t->m_link.Unlink();
     }
     s_critsect.Leave();
 
-    CloseHandle(t->m_handle);
     delete t;
 }    
 
