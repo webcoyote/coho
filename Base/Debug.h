@@ -17,7 +17,7 @@
 void __cdecl DebugMsg (const char fmt[], ...);
 void DebugMsgV (const char fmt[], va_list args);
 
-void DebugSetThreadName (const char name[]);
+void DebugSetThreadName (const char name[], unsigned threadId = 0);
 
 
 //===================================

@@ -22,6 +22,14 @@
 #define ALLOC(bytes)        MemAlloc(bytes, __FILE__, __LINE__)
 #define REALLOC(ptr, bytes) MemRealloc(ptr, bytes, __FILE__, __LINE__)
 
+// Used to allocate a structure that contains a variable length text
+// string at the end. Use StrChars for the "chars" field, not StrLen!
+#define SIZEOF_STRUCT_STRING(type, field, chars)  (     \
+        sizeof(type)                                    \
+        - sizeof(((type *) 0)->field)                   \
+        + sizeof(((type *) 0)->field[0]) * chars        \
+    )                                                   //
+
 // Memory allocation
 void   MemFree (void * ptr);
 void * MemAlloc (size_t bytes, const char file[], int line);

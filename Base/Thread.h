@@ -1,41 +1,40 @@
 /******************************************************************************
 *
-*   Base.h
+*   Thread.h
 *   
 *
-*   By Patrick Wyatt - 5/16/2010
+*   By Patrick Wyatt
 *
 ***/
 
-// Not having access to offsetof causes all sorts of odd compilation errors
-// that take time to track down!
-#ifndef offsetof
-#error Include stddef.h please!
-#endif
+
+struct Thread;
+
+// Module functions
+    void ThreadInit ();
+    void ThreadDestroy ();
+    void ThreadLogAllThreads ();
 
 
-#include "Macros.h"
-#include "Types.h"
-#include "List.h"
-#include "Hash.h"
-#include "Debug.h"
-#include "Log.h"
-#include "Mem.h"
-#include "Path.h"
-#include "Str.h"
-#include "Sync.h"
-#include "Task.h"
-#include "Thread.h"
-#include "Time.h"
+// Thread functions
+    Thread * ThreadCreate (
+        const char name[],
+        unsigned stack_size,
+        unsigned (__stdcall * start_address )(void *),
+        void *arglist
+    );
+    void ThreadDestroy (Thread * thread);
 
-
-#pragma comment(lib, "Base")
+    // For each thread created with ThreadCreate, call this function
+    // at least once per minute to mark it alive, otherwise deadlock
+    // processor will mark it dead and crash the application.
+    void ThreadMarkAlive (Thread * thread);
 
 
 //===================================
 // MIT License
 //
-// Copyright (c) 2010 by Patrick Wyatt
+// Copyright (c) 2012 by Patrick Wyatt
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal

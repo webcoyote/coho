@@ -82,6 +82,7 @@
     <ClInclude Include="Sync.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Task.h" />
+    <ClInclude Include="Thread.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
@@ -97,6 +98,7 @@
     <ClCompile Include="Str.cpp" />
     <ClCompile Include="Sync.cpp" />
     <ClCompile Include="Task.cpp" />
+    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

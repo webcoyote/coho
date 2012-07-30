@@ -64,11 +64,11 @@ void DebugMsgV (const char fmt[], va_list args) {
 }
 
 //=============================================================================
-void DebugSetThreadName (const char name[]) {
+void DebugSetThreadName (const char name[], unsigned threadId) {
     THREADNAME_INFO info;
     info.dwType      = 0x1000;
     info.szName      = name;
-    info.dwThreadID  = GetCurrentThreadId();
+    info.dwThreadID  = threadId ? threadId : GetCurrentThreadId();
     info.dwFlags     = 0;
 
     __try {
