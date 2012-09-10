@@ -22,6 +22,7 @@
 #include <shlwapi.h>
 #include <process.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <malloc.h>
 #include <stdlib.h>
 #include <winbase.h>

@@ -264,7 +264,9 @@ int _tmain(int argc, _TCHAR* argv[]) {
 
     // Test lists
     {
+        #ifdef _DEBUG
         _CrtMemState before, after, delta;
+        #endif
         _CrtMemCheckpoint(&before);
         ListTest::TestList();
         ListTest::TestRandom();
@@ -279,7 +281,9 @@ int _tmain(int argc, _TCHAR* argv[]) {
 
     // Test hashes
     {
+        #ifdef _DEBUG
         _CrtMemState before, after, delta;
+        #endif
         _CrtMemCheckpoint(&before);
         HashTest::TestHash();
         HashTest::TestRandom();
