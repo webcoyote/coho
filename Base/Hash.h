@@ -163,6 +163,10 @@ private:
     THash (unsigned rows, size_t offset);
     TLink<T> * GetLinkFromNode (const T * node) const;
     template<class T, class TKey, size_t offset> friend class THashDeclare;
+
+    // Hide copy-constructor and assignment operator
+    THash (const THash &);
+    THash & operator= (const THash &);
 };
 
 //=============================================================================

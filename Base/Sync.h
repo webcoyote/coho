@@ -18,6 +18,10 @@ class CCritSect {
 private:
     CRITICAL_SECTION    m_crit;
 
+    // Hide copy-constructor and assignment operator
+    CCritSect (const CCritSect &);
+    CCritSect & operator= (const CCritSect &);
+
 public:
     CCritSect ();
     ~CCritSect ();

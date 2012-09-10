@@ -73,14 +73,6 @@
 *       O'Brien in storm.dll for Diablo in 1995, and again at ArenaNet
 *       for Guild Wars.
 *
-*       I remember being seriously impressed when I read the code.
-*       Sadly, his code, which was initially used in Starcraft, was
-*       discarded by another programmer to make writing save-game
-*       files a bit easier. This was a decision that resulted in me
-*       fixing vast numbers of linked-list bugs written by other
-*       programmers, I kid you not. Do NOT use regular linked lists
-*       unless you like to track down freed-memory deref bugs.
-*
 ***/
 
 
@@ -143,6 +135,10 @@ private:
     T *         m_nextNode; // pointer to the next >object<
     TLink<T> *  m_prevLink; // pointer to the previous >link field<
     void RemoveFromList ();
+
+    // Hide copy-constructor and assignment operator
+    TLink (const TLink &);
+    TLink & operator= (const TLink &);
 };
 
 //=============================================================================
@@ -312,6 +308,10 @@ private:
     TList (size_t offset);
     TLink<T> * GetLinkFromNode (const T * node) const;
     template<class T, size_t offset> friend class TListDeclare;
+
+    // Hide copy-constructor and assignment operator
+    TList (const TList &);
+    TList & operator= (const TList &);
 };
 
 //=============================================================================
