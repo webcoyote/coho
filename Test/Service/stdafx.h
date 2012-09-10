@@ -22,6 +22,7 @@
 #include <shlwapi.h>
 #include <process.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <malloc.h>
 #include <stdlib.h>
 #include <winbase.h>
@@ -30,5 +31,5 @@
 
 
 // Project includes
-#include <Base/Base.h>
-#include <Lib/SrvLib/SrvLib.h>
+#include "../../Base/Base.h"
+#include "../../Lib/SrvLib/SrvLib.h"

@@ -29,9 +29,6 @@
 #include "Time.h"
 
 
-#pragma comment(lib, "Base")
-
-
 //===================================
 // MIT License
 //
