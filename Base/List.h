@@ -19,7 +19,7 @@
 *   Why is this cool:
 *       1. No additional memory allocations (malloc) required to link
 *           an object into a linked list.
-*       2. Not necessary to traverse an additional pointer references
+*       2. Not necessary to traverse an additional pointer reference
 *           to get to the object being dereferenced.
 *       3. Probably most importantly, when objects get deleted, they
 *           automatically unlink themselves from the lists they're
